@@ -10,6 +10,50 @@ public class BST {
 
     public BTreeNode getRoot(){return root;}
 
+
+    public void removeSubTree1() throws TreeException {
+        if(isEmpty())
+            throw new TreeException("Binary Search Tree is empty");
+        root = removeSubTree1(root);
+    }
+
+    private BTreeNode removeSubTree1(BTreeNode node) {
+        if (node == null) return null;
+
+        // Procesar recursivamente los hijos primero
+        node.left = removeSubTree1(node.left);
+        node.right = removeSubTree1(node.right);
+
+        // Verificar si este nodo tiene exactamente un hijo
+        boolean hasExactlyOneChild = (node.left != null && node.right == null) ||
+                (node.left == null && node.right != null);
+
+        if (hasExactlyOneChild) {
+            // Verificar si todo el subárbol cumple la condición de tener exactamente un hijo
+            if (allDescendantsHaveExactlyOneChild(node)) {
+                return null; // Eliminar todo el subárbol
+            }
+        }
+
+        return node;
+    }
+
+    // Método auxiliar para verificar si todo el subárbol cumple la condición
+    private boolean allDescendantsHaveExactlyOneChild(BTreeNode node) {
+        if (node == null) return true;
+
+        // Si es una hoja, cumple la condición (caso base válido)
+        if (node.left == null && node.right == null) return true;
+
+        // Si tiene dos hijos, no cumple la condición
+        if (node.left != null && node.right != null) return false;
+
+        // Si tiene exactamente un hijo, verificar recursivamente todos los descendientes
+        return allDescendantsHaveExactlyOneChild(node.left) &&
+                allDescendantsHaveExactlyOneChild(node.right);
+    }
+
+
     public int size() throws TreeException {
         if(isEmpty())
             throw new TreeException("Binary Search Tree is empty");

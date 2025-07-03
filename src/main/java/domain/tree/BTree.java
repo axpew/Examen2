@@ -3,6 +3,32 @@ package domain.tree;
 public class BTree  {
     private BTreeNode root; //se refiere a la raiz del arbol
 
+    public String oddPathSumList() throws TreeException {
+        if(isEmpty())
+            throw new TreeException("Binary Tree is empty");
+        return oddPathSumList(root, 0);
+    }
+
+    private String oddPathSumList(BTreeNode node, int sum) {
+        if(node == null) return "";
+
+        // Calcular la suma actual incluyendo este nodo
+        int currentSum = sum + (Integer)node.data;
+
+        String result = "";
+
+        // Si la suma es impar, agregar este nodo al resultado
+        if(currentSum % 2 != 0) {
+            result = node.data + " ";
+        }
+
+        // Recursión para los subárboles
+        result += oddPathSumList(node.left, currentSum);
+        result += oddPathSumList(node.right, currentSum);
+
+        return result;
+    }
+
 
     public int size() throws TreeException {
         if(isEmpty())

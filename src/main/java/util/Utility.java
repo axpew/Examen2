@@ -1,93 +1,28 @@
 package util;
 
-
-import domain.EdgeWeight;
-import domain.Vertex;
-
-import java.text.CollationKey;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 import java.util.Calendar;
-import java.util.Stack;
 
 public class Utility {
 
     private static final Random random;
-    //  private static CircularLinkedList employeeList;
-    //  private static CircularDoublyLinkedList jobPositionList;
-    //  private static CircularDoublyLinkedList staffingList;
-
-    //Para laboratorio 7
-    //  private static LinkedQueue queue;
-    //  private static LinkedStack stack;
 
     //constructor estático, inicializador estático
     static {
         // semilla para el random
         long seed = System.currentTimeMillis();
         random = new Random(seed);
-
-        //Para laboratorio 7
-        //   queue = new LinkedQueue();
-        //   stack = new LinkedStack();
-
-        //   employeeList = new CircularLinkedList();
-        //   jobPositionList = new CircularDoublyLinkedList();
-        //   staffingList = new CircularDoublyLinkedList();
     }
 
-    /*
-        //---- PARA LABORATORIO 7 ----
-        public static LinkedQueue getQueue() {
-            return queue;
-        }
-
-        public static void setQueue(LinkedQueue queue) {
-            Utility.queue = queue;
-        }
-
-        public static LinkedStack getStack() {
-            return stack;
-        }
-
-        public static void setStack(LinkedStack stack) {
-            Utility.stack = stack;
-        }
-    */
-    /*
-    public static CircularLinkedList getEmployeeList() {
-        return employeeList;
-    }
-
-    public static void setEmployeeList(CircularLinkedList employeeList) {
-        Utility.employeeList = employeeList;
-    }
-
-    public static CircularDoublyLinkedList getJobPositionList() {
-        return jobPositionList;
-    }
-
-    public static void setJobPositionList(CircularDoublyLinkedList jobPositionList) {
-        Utility.jobPositionList = jobPositionList;
-    }
-
-    public static CircularDoublyLinkedList getStaffingList() {
-        return staffingList;
-    }
-
-    public static void setStaffingList(CircularDoublyLinkedList staffingList) {
-        Utility.staffingList = staffingList;
-    }
-*/
     // ------------------------------------------------------------- Métodos:
     public static int random(int bound){
         // return(int) Math.floor(Math.random()*bound); //Forma 1
         return random.nextInt(bound);
     }
-
 
     public static void fill(int[] a) {
         for (int i = 0; i < a.length; i++){
@@ -135,12 +70,6 @@ public class Utility {
             case "Character":
                 Character c1 = (Character)a; Character c2 = (Character)b;
                 return c1.compareTo(c2)<0 ? -1 : c1.compareTo(c2)>0 ? 1 : 0;
-            case "EdgeWeight":
-                EdgeWeight ew1 = (EdgeWeight) a; EdgeWeight ew2 = (EdgeWeight) b;
-                return compare(ew1.getEdge(), ew2.getEdge());
-            case "Vertex":
-                Vertex v1 = (Vertex) a; Vertex v2 = (Vertex) b;
-                return compare(v1.data, v2.data);
         }
         return 2; //Unknown
     }
@@ -149,8 +78,6 @@ public class Utility {
         if(a instanceof Integer && b instanceof Integer) return "Integer";
         if(a instanceof String && b instanceof String) return "String";
         if(a instanceof Character && b instanceof Character) return "Character";
-        if(a instanceof EdgeWeight && b instanceof EdgeWeight) return "EdgeWeight";
-        if(a instanceof Vertex && b instanceof Vertex) return "Vertex";
         return "Unknown";
     }
 
@@ -184,116 +111,20 @@ public class Utility {
         return age;
     }
 
-
     private static int getPriorityOperators(char operator) {
-
         switch (operator) {
             case '+': case '-': return 1; //Prioridad más baja
             case '*': case '/': return 2;
             case '^': return 3; //Prioridad más alta
         } return -1;
-
     }
 
-    /*
-        public static boolean isBalanced(String expression){
-
-            LinkedStack linkedStack = new LinkedStack();
-
-            try {
-                for (char character : expression.toCharArray()) {
-                    if (character == '(' || character == '[' || character == '{') {
-                        linkedStack.push(character);
-                    } else if (character == ')' || character == ']' || character == '}') {
-                        if (linkedStack.isEmpty()) {
-                            return false;
-                        }
-                        char top = (char) linkedStack.pop();
-                        if (!matches(top, character)) {
-                            return false;
-                        }
-                    }
-                }
-            } catch (StackException e) {
-                throw new RuntimeException(e);
-            }
-
-            return linkedStack.isEmpty();
-        }
-    */
     private static boolean matches(char open, char close) {
         return (open == '(' && close == ')') ||
                 (open == '[' && close == ']') ||
                 (open == '{' && close == '}');
     }
 
-    //METODO QUE RESUELVE LA OPERACION DE LA EXPRESION INFIJA -----------------------------------------------------
-/*
-    public static int evaluateInfix(String infixExpression) {
-        Stack<Integer> operands = new Stack<>();  // Pila para operandos
-        Stack<Character> operators = new Stack<>();  // Pila para operadores
-
-        for (int i = 0; i < infixExpression.length(); i++) {
-            char c = infixExpression.charAt(i);
-
-            if (c == ' ') continue; //Para ignorar los espacios en blanco
-
-            //Si es dígito se agrega a la pila de operando
-            if (Character.isDigit(c)) {
-                operands.push(c - '0');
-            }
-            else if (c == '(') {
-                operators.push(c);
-            }
-            else if (c == ')') {
-                while (!operators.isEmpty() && operators.peek() != '(') {
-                    char operator = operators.pop();
-                    int operand2 = operands.pop();
-                    int operand1 = operands.pop();
-                    int result = calculate(operator, operand1, operand2);
-                    operands.push(result);
-                }
-                operators.pop();
-            }
-            //Si es un operador resuelve las operaciones
-            else if (isOperator(c)) {
-                while (!operators.isEmpty() && hasPrecedence(c, operators.peek())) {
-                    char operator = operators.pop();
-                    int operand2 = operands.pop();
-                    int operand1 = operands.pop();
-                    int result = calculate(operator, operand1, operand2);
-                    operands.push(result);
-                }
-                operators.push(c);
-            }
-        }
-
-        while (!operators.isEmpty()) {
-            char operator = operators.pop();
-            int operand2 = operands.pop();
-            int operand1 = operands.pop();
-            int result = calculate(operator, operand1, operand2);
-            operands.push(result);
-        }
-
-        //El resultado final estará en la cima de la pila de operandos
-        return operands.pop();
-    }
-
-    private static boolean isOperator(char c) {
-        return c == '+' || c == '-' || c == '*' || c == '/';
-    }
-
-    private static boolean hasPrecedence(char operator1, char operator2) {
-        if (operator2 == '(' || operator2 == ')') {
-            return false;
-        }
-        if ((operator1 == '*' || operator1 == '/') && (operator2 == '+' || operator2 == '-')) {
-            return false;
-        }
-        return true;
-    }
-*/
     private static int calculate(char operator, int operand1, int operand2) {
         switch (operator) {
             case '+':
@@ -313,8 +144,6 @@ public class Utility {
                 throw new IllegalArgumentException("Operador inválido");
         }
     }
-
-// ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
     //-------------------- Métodos para Laboratory7 --------------------
     public static String getPlace() {
@@ -349,10 +178,6 @@ public class Utility {
         return random.nextInt(100); // Genera un número entre 0 y 99;
     }
 
-
-
-    //------------------------------------------------------------------------------
-
     //-------------------- Métodos para Laboratory8 --------------------
 
     public static int maxArray(int[] a) {
@@ -374,31 +199,6 @@ public class Utility {
         return arrayResult;
     }//end getIntegerArray
 
-    /*
-    public static void sortElementaryArrays(String algorithm, int[] array) {
-
-        switch (algorithm) {
-            case "bubbleSort":
-                Elementary.bubbleSort(array);
-                break;
-
-            case "improvedBubbleSort":
-                Elementary.improvedBubbleSort(array);
-                break;
-
-            case "selectionSort":
-                Elementary.selectionSort(array);
-                break;
-
-            case "countingSort":
-                Elementary.countingSort(array);
-                break;
-
-        }//End switch
-
-    }//end sortElementaryArrays()
-*/
-
     public static int[] copyArray(int[] a, int lenght){
         int[] result = new int[lenght];
 
@@ -418,19 +218,4 @@ public class Utility {
         return s != null && s.matches("\\d+");
     }
 
-    //------------------------------------------------------------------------------
-
-    //-------------------- Métodos para Laboratory12 --------------------
-
-
-
-
-
-
-
-
-
-
-
 }//END CLASS
-
